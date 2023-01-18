@@ -1,0 +1,194 @@
+# Escriba una plantilla de AWS CloudFormation que cree la infraestructura necesaria para desplegar la aplicación web propuesta en la práctica 7.
+
+#------------------------------------------------------------------------------------------------------
+# Variables
+
+Ubuntu_AMI_ID=ami-06878d265978313ca
+COUNT=1
+INSTANCE_TYPE=t2.micro
+KEY_NAME=vockey
+
+INSTANCE_NAME_LOAD_BALANCER=loadbalancer-ej13-2
+INSTANCE_NAME_FRONTEND_01=frontend01-ej13-2
+INSTANCE_NAME_FRONTEND_02=frontend02-ej13-2
+INSTANCE_NAME_BACKEND=backend-ej13-2
+INSTANCE_NAME_NFS=nfs-ej13-2
+
+
+SECURITY_GROUP_BACKEND=sg-backend-ej13-2
+SECURITY_GROUP_FRONTEND=sg-frontend-ej13-2
+SECURITY_GROUP_LOAD_BALANCER=sg-loadbalancer-ej13-2
+SECURITY_GROUP_NFS=sg-nfs-ej13-2
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# Frontends
+
+#------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crea los grupos de seguridad de frontend y crea las instancias
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: {{ SECURITY_GROUP_FRONTEND }}
+      GroupDescription: Grupo de seguridad de los frontends 
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06878d265978313ca
+      InstanceType: t2.small
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      KeyName: vockey
+      Tags:
+        - Key: Name
+          Value: {{ INSTANCE_NAME_FRONTEND_01 }}
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06878d265978313ca
+      InstanceType: t2.small
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      KeyName: vockey
+      Tags:
+        - Key: Name
+          Value: {{ INSTANCE_NAME_FRONTEND_02 }}
+
+
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# Backend
+
+#------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crea el grupo de seguridad para backend con el puerto 3306 abierto y crea la instancia.
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: {{ SECURITY_GROUP_BACKEND }}
+      GroupDescription: Grupo de seguridad del backend 
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06878d265978313ca
+      InstanceType: t2.small
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      KeyName: vockey
+      Tags:
+        - Key: Name
+          Value: {{ INSTANCE_NAME_BACKEND }}
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# Load Balancer
+
+#------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crea un grupo de seguridad para el balanceador de carga (puerto 443), crea la instancia y le agrega una IP elástica
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: {{ SECURITY_GROUP_LOAD_NFS }}
+      GroupDescription: Grupo de seguridad del balanceador de carga
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06878d265978313ca
+      InstanceType: t2.small
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      KeyName: vockey
+      Tags:
+        - Key: Name
+          Value: {{ INSTANCE_NAME_LOAD_BALANCER }}
+  MyEIP:
+    Type: AWS::EC2::EIP
+  MyEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    DependsOn: MyEIP
+    Properties:
+      AllocationId: !GetAtt MyEIP.AllocationId
+      InstanceId: !Ref MyEC2Instance
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# NFS
+
+#------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crea el grupo de seguridad para el servidor NFS con el puerto 2049 tcp abierto y crea la instancia para el servidor.
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: {{ SECURITY_GROUP_NFS }}
+      GroupDescription: Grupo de seguridad del servidor NFS 
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          CidrIp: 0.0.0.0/0
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06878d265978313ca
+      InstanceType: t2.small
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      KeyName: vockey
+      Tags:
+        - Key: Name
+          Value: {{ INSTANCE_NAME_NFS }}
+
+
+
+
