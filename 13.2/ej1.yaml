@@ -11,8 +11,8 @@ KEY_NAME=vockey
 INSTANCE_NAME_FRONTEND=frontend-ej13-2
 INSTANCE_NAME_BACKEND=backend-ej13-2
 
-SECURITY_GROUP_BACKEND=sg-backend-ej13-2
-SECURITY_GROUP_FRONTEND=sg-frontend-ej13-2
+SECURITY_GROUP_BACKEND=backend-ej13-2-sg
+SECURITY_GROUP_FRONTEND=frontend-ej13-2-sg
 #------------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------------------
