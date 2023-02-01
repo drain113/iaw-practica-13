@@ -1,0 +1,22 @@
+---
+
+# Ejercicio 1
+  vars:
+    ec2_security_group: sg_ejemplo_12
+    ec2_security_group_description: Grupo de seguridad del ejemplo 12
+    ec2_instance_name: instancia_ejemplo_12
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+# Ejercicio 2
+    ec2_security_group: sg_ejemplo_13
+    ec2_security_group_description: Grupo de seguridad del ejemplo 13
+    ec2_instance_name: instancia_ejemplo_13
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+# Ejercicio 3
+    ec2_security_group: sg_ejemplo_12
+    ec2_instance_name: instancia_ejemplo_12
