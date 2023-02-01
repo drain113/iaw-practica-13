@@ -1,0 +1,37 @@
+---
+- name: Playbook para crear infraestructura NFS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+#-----------------------------------------------------Variables---------------------------------------------#
+      - name: Variables
+        ansible.builtin.include_vars:
+          variables.yml
+#-----------------------------------------------------------------------------------------------------------#
+
+  tasks:
+  - name: Crear un grupo de seguridad
+    ec2_group:
+      name: "{{ ec2_security_group }}"
+      description: "{{ ec2_security_group_description }}"
+      rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 2049
+        to_port: 2049
+        cidr_ip: 0.0.0.0/0
+    register: security_group
+
+  - name: Crear una instancia EC2
+    ec2_instance:
+      name: "{{ ec2_instance_name }}"
+      key_name: "{{ ec2_key_name }}"
+      security_group: "{{ ec2_security_group }}"
+      instance_type: "{{ ec2_instance_type }}"
+      image_id: "{{ ec2_image }}"
+      state: running
+    register: ec2

@@ -1,0 +1,6 @@
+---
+  - import_playbook: /playbooks/backend.yml
+  - import_playbook: /playbooks/frontend_01.yml
+  - import_playbook: /playbooks/frontend_02.yml
+  - import_playbook: /playbooks/nfs.yml
+  - import_playbook: /playbooks/loadbalancer.yml 
