@@ -57,7 +57,7 @@ Ambos ejercicios se realizan mediante un archivo .yaml que sigue una estructura 
 <br>   </br>
 # Conclusión
 
-Gracias a AWS CLI podemos gestionar nuestros elementos de AWS de una manera sencilla desde la terminal y de manera remota a la  interfaz gráfica de Amazon.
+Gracias a AWS CloudFormation podemos crear una estructura en código para manejar nuestras máquinas EC2 de manera eficiente.
 
 <break>   </break>  
 -Guille  
