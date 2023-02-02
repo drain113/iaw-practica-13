@@ -1,4 +1,4 @@
-# Balanceador de carga con Apache
+# Práctica 13.1: Usando AWS CLI 
 <p align="center">
 <img src="https://raw.githubusercontent.com/drain113/pictures/main/Fotos/1%20utV4kZA0lGODHtdOI0-5Bw.png" width="" height="320" />  
 </p>
