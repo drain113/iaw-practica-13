@@ -1,0 +1,40 @@
+---
+    # Backend
+    ec2_security_group: data_base_ec2
+    ec2_security_group_description: Grupo de Base de Datos para EC2
+    ec2_instance_name: data_base
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+    # Frontend
+    ec2_security_group: frontend_ec2
+    ec2_security_group_description: Grupo de frontend para EC2
+    ec2_instance_name: frontend_01
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+    # Frontend #2
+    ec2_security_group: frontend_ec2
+    ec2_security_group_description: Grupo de frontend para EC2
+    ec2_instance_name: frontend_02
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+    # Load Balancer
+    ec2_security_group: lb_ec2
+    ec2_security_group_description: Grupo de LB para EC2
+    ec2_instance_name: loadbalancer
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey
+
+    # NFS
+    ec2_security_group: nfs_ec2
+    ec2_security_group_description: Grupo de NFS para EC2
+    ec2_instance_name: nfs
+    ec2_image: ami-06878d265978313ca
+    ec2_instance_type: t2.small
+    ec2_key_name: vockey

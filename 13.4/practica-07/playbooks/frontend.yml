@@ -4,13 +4,11 @@
   connection: local
   gather_facts: false
 
-  vars:
-    ec2_security_group: frontend_ec2
-    ec2_security_group_description: Grupo de frontend para EC2
-    ec2_instance_name: frontend
-    ec2_image: ami-06878d265978313ca
-    ec2_instance_type: t2.small
-    ec2_key_name: vockey
+#-----------------------------------------------------Variables---------------------------------------------#
+      - name: Variables
+        ansible.builtin.include_vars:
+          variables.yml
+#-----------------------------------------------------------------------------------------------------------#
 
   tasks:
   - name: Crear grupo de seguridad Frontend
