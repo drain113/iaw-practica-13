@@ -1,8 +1,7 @@
 # Práctica 13.5: Usando Terraform  
 <br>
 <p align="center">
-<img src="https://raw.githubusercontent.com/drain113/pictures/main/Fotos/featured.png
-" width="" height="320" />  
+<img src="https://raw.githubusercontent.com/drain113/pictures/main/Fotos/featured.png" width="" height="320" />  
 </p>
 <br>   <br/>  
 
