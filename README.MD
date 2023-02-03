@@ -46,11 +46,11 @@ Como he comentado antes, la práctica 13 reúne una serie de ejercicios para pod
 
 4. **Práctica 13.4**
 
-[Actividad 13.4: Ansible.](13.4/README.MD)
+[Actividad 13.4: Ansible.](13.4/)
 
 5. **Práctica 13.5** 
 
-[Actividad 13.5: Terraform.](13.5/README.MD)
+[Actividad 13.5: Terraform.](13.5/)
 
 <br>   </br>
 # Conclusión
