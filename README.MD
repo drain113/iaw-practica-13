@@ -31,18 +31,18 @@ Como he comentado antes, la práctica 13 reúne una serie de ejercicios para pod
 
 1. **Práctica 13.1**
 
-[AWS CLI (Command Line Interface)](13.1/README.MD)
+[AWS CLI (Command Line Interface)](13.1/)
 
 
 
 1. **Práctica 13.2**
 
-[Actividad 13.2: AWS CloudFormation](13.2/README.MD)
+[Actividad 13.2: AWS CloudFormation](13.2/)
 
 
 1. **Práctica 13.3**
 
-[Actividad 13.3: AWS SDK para Python (Boto3)](13.3/README.MD)
+[Actividad 13.3: AWS SDK para Python (Boto3)](13.3/)
 
 4. **Práctica 13.4**
 
