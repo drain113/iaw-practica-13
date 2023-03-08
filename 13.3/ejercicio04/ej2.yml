@@ -11,10 +11,10 @@
 #-----------------------------------------------------------------------------------------------------------#
 
   tasks:
-  - name: Crear un grupo de seguridad
+  - name: Crear SG
     ec2_group:
-      name: "{{ ec2_security_group }}"
-      description: "{{ ec2_security_group_description }}"
+      name: "{{ 2_ec2_security_group }}"
+      description: "{{ 2_ec2_security_group_description }}"
       rules:
       - proto: tcp
         from_port: 22
@@ -30,9 +30,9 @@
         cidr_ip: 0.0.0.0/0
     register: security_group
 
-  - name: Crear una instancia EC2
+  - name: Crear EC2
     ec2_instance:
-      name: "{{ ec2_instance_name }}"
+      name: "{{ 2_ec2_instance_name }}"
       key_name: "{{ ec2_key_name }}"
       security_group: "{{ ec2_security_group }}"
       instance_type: "{{ ec2_instance_type }}"
@@ -40,15 +40,16 @@
       state: running
     register: ec2
 
-  - name: Mostramos el contenido de la variable ec2
+  - name: Mostrar EC2
     debug:
       msg: "ec2: {{ ec2 }}"
 
-  - name: Crear una nueva IP elástica y asociar a la instancia
+  - name: Crear IP Elástica
     ec2_eip:
       device_id: "{{ ec2.instances[0].instance_id }}"
     register: eip
 
-  - name: Mostrar la IP elástica
+  - name: Mostrar IP Elástica
     debug:
       msg: "La IP elástica es: {{ eip.public_ip }}"
+

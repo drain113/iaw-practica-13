@@ -1,17 +1,16 @@
 import aws
 
-# Inicializamos una lista con los nombres de las instancias
-ec2_list = ['lb', 'frontend-01', 'frontend-02', 'backend', 'nfs']
+ec2_list = ["EC2-LoadBalancer", "EC2-FrontEnd-01", "EC2-FrontEnd-02", "EC2-BackEnd", "EC2-NFS"]
 
-# Inicializamos una lista con los nombres de los grupos de seguridad
-sg_list = ['sg_lb', 'sg_frontend', 'sg_backend', 'sg_nfs']
+sg_list = ["sg_loa", "sg_fro", "sg_bac", "sg_nfs"]
 
+# Bucle for para eliminar instancias
 for ec2_name in ec2_list:
     print(f"Eliminado instancia: {ec2_name}...")
 
     aws.terminate_instance(ec2_name)
 
-
+# Bucle for para eliminar SGs
 for sg_name in sg_list:
     print(f"Eliminado grupo de seguridad: {sg_name}...")
 

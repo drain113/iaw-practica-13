@@ -1,54 +1,61 @@
 import aws
 
-# Security group ingress permissions
+# Reglas SG
 ingress_permissions = [
-    {'CidrIp': '0.0.0.0/0', 'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22},        
+    {'CidrIp': '0.0.0.0/0', 'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22},    
     {'CidrIp': '0.0.0.0/0', 'IpProtocol': 'tcp', 'FromPort': 3306, 'ToPort': 3306}]
 
-# Pedimos por teclado el nombre y descripción del grupo
-group_name = input('Introduce el nombre del grupo de seguridad: ')
-group_description = input('Introduce una descripción del grupo de seguridad: ')
+# Nombre y descripción del SG
+group_name = input("Introduce el nombre del grupo de seguridad: ")
+description = input("Introduce una descripcion para el grupo de seguridad: ")
 
-# Creamos el grupo de seguridad
-aws.create_security_group(group_name, group_description, ingress_permissions)
+# Creación SG
+aws.create_security_group(group_name, description, ingress_permissions)
 
-# Crear instancia EC2
+# AMIs
 amis_list = ['ami-06878d265978313ca', 'ami-08e637cea2f053dfa']
 
-print('-- AMIs --')
-print ('1. Ubuntu Server')
-print ('2. RedHat Enterprise Server')
-opcion = int(input('Selecciona una AMI '))
+# Menú Seleccionar AMIs
+print('*-*-*-* AMIs Disponibles *-*-*-*')
+print('1. Ubuntu Server')
+print('2. Red Hat Enterprise Server')
+
+opcion = int(input("Introduce una AMI (1-2): "))
+
+# ------------- Blucle While -------------
 while opcion < 1 or opcion > 2:
-    print ('Error, el valor no es válido')
-    opcion = int(input('Seleccione una AMI (1-2): '))
+    print("Introduce una AMI entre (1-2)")
+    opcion = int(input("Introduce una AMI (1-2): "))
 
-# Guardamos el identificador de la AMI seleccionada por el usuario
-ami_id = amis_list[opcion - 1]
+ami_id = amis_list[opcion - 1] # (Le restamos -1 para que las opciones cuadren con los valores del array.)
+number_of_instances = int(input("Numero de instancias que deseas crear (1-9): "))
 
-# Instancias a crear por el usuario
-number_of_instances = int(input('¿Cuantas instancias quieres crear (1-9)?: '))
-while number_of_instances < 1 or number_of_instances > 9:
-    print ('Error, el valor no es válido')
-    number_of_instances = int(input('¿Cuantas instancias quieres crear (1-9)?: '))
+while number_of_instances <1 or number_of_instances > 9:
+    print("El minimo de instancias es 1 y el maximo 9")
+    number_of_instances = int(input("Numero de instancias que deseas crear (1-9): "))
 
-# Leer tipo de instancia
 instance_type_list = ['t2.micro', 't2.small', 't2.medium']
 
-print ('-- Tipo de instancia  -- ')
-print ('1. t2.micro')
-print ('1. t2.small')
-print ('1. t2.medium')
+# ---------------------------------------
 
-opcion = int(input('Selecciona un tipo de instancia (1-3): '))
-while opcion < 1 or opcion > 3:
-    print('Error, el valor no es válido ')
-    opcion = int(input('Selecciona un tipo de instancia (1-3): '))
+# Menú Seleccionar Instancias
+print('*-*-*-* Instancias Disponibles *-*-*-*')
+print('1. t2.micro')
+print('2. t2.small')
+print('3. t2.medium')
 
-# Guardamos el tipo de instancia 
-instance_type = instance_type_list[opcion - 1]
+opcion = int(input("Introduce la instancia (1-3): "))
 
-# Leemos el nombre de la instancia
-instance_name = input('Nombre de la instancia: ')
+# ------------- Blucle While -------------
+while opcion <1 or opcion >3:
+    print("La instancia introducida no es valida")
+    opcion = int(input("Introduce la instancia (1-3): "))
 
+instance_type = instance_type_list[ opcion - 1]
+
+instance_name = input("Nombre de tu instancia: ")
+
+# ---------------------------------------
+
+# Creación SG
 aws.create_instance(ami_id, number_of_instances, instance_type, 'vockey', instance_name, group_name)

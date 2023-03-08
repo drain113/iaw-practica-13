@@ -47,7 +47,7 @@ List all security groups
 """
 def list_security_groups():
   ec2 = boto3.resource('ec2')
-  for sg in ec2.security_groups.all(): 
+  for sg in ec2.security_groups.all():
     print(f"group_id: {sg.group_id} \t group_name: {sg.group_name} \t description: {sg.description}")
     for rule in sg.ip_permissions:
       print(rule)
@@ -227,7 +227,7 @@ def terminate_instance(instance_name):
 """
 Create a new EC2 instance
 """
-def create_instance(image_id, max_count, instance_type, key_name,instance_name, security_group_name ):
+def create_instance(image_id, max_count, instance_type, key_name, instance_name, security_group_name):
   # Create a boto3 resource instance
   ec2 = boto3.resource('ec2')
 
@@ -237,8 +237,8 @@ def create_instance(image_id, max_count, instance_type, key_name,instance_name, 
     MinCount = 1,
     MaxCount = max_count,
     InstanceType = instance_type,
-    SecurityGroups = [ security_group_name ],
     KeyName = key_name,
+    SecurityGroups = [ security_group_name ],
     TagSpecifications=[{
       'ResourceType': 'instance',
       'Tags': [{
@@ -258,6 +258,15 @@ def get_instance_id(instance_name):
   for i in ec2.instances.all():
     if i.tags[0]['Value'] == instance_name:
       return i.id
+
+"""
+Returns the public IP of an instance
+"""
+def get_instance_public_ip(instance_name):
+  ec2 = boto3.resource('ec2')
+  for i in ec2.instances.all():
+    if i.tags[0]['Value'] == instance_name:
+      return i.public_ip_address
 
 """
 Allocate an elastic IP
@@ -285,7 +294,7 @@ Associate an elastic IP to an instance
 def associate_elastic_ip(public_ip, instance_id):
   ec2 = boto3.resource('ec2')
 
-  print('Waiting until the instance is running...')
+  print('Watting until the instance is running...')
   ec2.Instance(instance_id).wait_until_running()
 
   allocation_id = get_allocation_id(public_ip)

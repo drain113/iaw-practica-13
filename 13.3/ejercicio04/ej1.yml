@@ -11,7 +11,7 @@
 #-----------------------------------------------------------------------------------------------------------#
 
   tasks:
-  - name: Crear un grupo de seguridad
+  - name: Crear SG
     ec2_group:
       name: "{{ ec2_security_group }}"
       description: "{{ ec2_security_group_description }}"
@@ -30,7 +30,7 @@
         cidr_ip: 0.0.0.0/0
     register: security_group
 
-  - name: Crear una instancia EC2
+  - name: Crear EC2
     ec2_instance:
       name: "{{ ec2_instance_name }}"
       key_name: "{{ ec2_key_name }}"
