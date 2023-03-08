@@ -11,7 +11,7 @@
 #-----------------------------------------------------------------------------------------------------------#
 
   tasks:
-  - name: Crear grupo de seguridad Backend
+  - name: Crear SG
     ec2_group:
       name: "{{ ec2_security_group }}"
       description: "{{ ec2_security_group_description }}"
@@ -25,7 +25,7 @@
         to_port: 3306
         cidr_ip: 0.0.0.0/0
 
-  - name: Crear la instancia EC2
+  - name: Crear EC2
     ec2_instance:
       name: "{{ ec2_instance_name }}"
       key_name: "{{ ec2_key_name }}"

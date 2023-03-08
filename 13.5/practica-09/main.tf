@@ -1,171 +1,123 @@
-# Configuramos el proveedor de AWS
+
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
-# ------------------------- GRUPOS DE SEGURIDAD ----------------------- #
 
-# Creamos un grupo de seguridad Backend
-resource "aws_security_group" "sg_backend" {
-  name        = "sg_ejemplo_03"
-  description = "Grupo de seguridad para Backend"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+# Creación SG
+resource "aws_security_group" "frontend_sg" {
+  name        = var.sg_name_frontend
+  description = var.sg_description_frontend
 }
 
-# Creamos un grupo de seguridad Frontend
-resource "aws_security_group" "sg_frontend" {
-  name        = "sg_ejemplo_03"
-  description = "Grupo de seguridad para Frontend"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group" "backend_sg" {
+  name        = var.sg_name_backend
+  description = var.sg_description_backend
 }
 
-# Creamos un grupo de seguridad Load Balancer
-resource "aws_security_group" "sg_lb" {
-  name        = "sg_ejemplo_03"
-  description = "Grupo de seguridad para Lb"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group" "nfs_sg" {
+  name        = var.sg_name_nfs
+  description = var.sg_description_nfs
 }
 
-# Creamos un grupo de seguridad NFS
-resource "aws_security_group" "sg_nfs" {
-  name        = "sg_ejemplo_03"
-  description = "Grupo de seguridad para NFS"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group" "load_balancer_sg" {
+  name        = var.sg_name_load_balancer
+  description = var.sg_description_load_balancer
 }
 
-# --------------------------------------------------------------------- #
 
-# ------------------------ CREACIÓN DE INSTANCIAS --------------------- #
+# Reglas entrada SG
+resource "aws_security_group_rule" "ingress" {
+  security_group_id = aws_security_group.frontend_sg.id
+  type              = "ingress"
 
+  count       = length(var.allowed_ingress_ports_frontend)
+  from_port   = var.allowed_ingress_ports_frontend[count.index]
+  to_port     = var.allowed_ingress_ports_frontend[count.index]
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
 
-# Creamos una instancia EC2 para el Backend
-resource "aws_instance" "ec_backend" {
-  ami                    = "ami-00874d747dde814fa"
-  instance_type          = "t2.small"
-  key_name               = "vockey"
-  security_groups = [aws_security_group.sg_backend.name]
+resource "aws_security_group_rule" "ingress2" {
+  security_group_id = aws_security_group.backend_sg.id
+  type              = "ingress"
+
+  count       = length(var.allowed_ingress_ports_backend)
+  from_port   = var.allowed_ingress_ports_backend[count.index]
+  to_port     = var.allowed_ingress_ports_backend[count.index]
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "ingress3" {
+  security_group_id = aws_security_group.load_balancer_sg.id
+  type              = "ingress"
+
+  count       = length(var.allowed_ingress_ports_loadbalancer)
+  from_port   = var.allowed_ingress_ports_loadbalancer[count.index]
+  to_port     = var.allowed_ingress_ports_loadbalancer[count.index]
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "ingress4" {
+  security_group_id = aws_security_group.nfs_sg.id
+  type              = "ingress"
+
+  count       = length(var.allowed_ingress_ports_nfs)
+  from_port   = var.allowed_ingress_ports_nfs[count.index]
+  to_port     = var.allowed_ingress_ports_nfs[count.index]
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+# Creación EC2
+resource "aws_instance" "Frontend" {
+  ami             = var.ami_id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.frontend_sg.name]
 
   tags = {
-    Name = "ec_backend"
+    Name = var.instance_name_frontend
   }
 }
 
-# Creamos una instancia EC2 para el Frontend
-resource "aws_instance" "ec_frontend" {
-  ami                    = "ami-00874d747dde814fa"
-  instance_type          = "t2.small"
-  key_name               = "vockey"
-  security_groups = [aws_security_group.sg_frontend.name]
+resource "aws_instance" "Backend" {
+  ami             = var.ami_id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.backend_sg.name]
 
   tags = {
-    Name = "ec_frontend"
+    Name = var.instance_name_backend
   }
 }
 
-# Creamos una instancia EC2 para el NFS
-resource "aws_instance" "ec_nfs" {
-  ami                    = "ami-00874d747dde814fa"
-  instance_type          = "t2.small"
-  key_name               = "vockey"
-  security_groups = [aws_security_group.sg_nfs.name]
+resource "aws_instance" "LoadBalancer" {
+  ami             = var.ami_id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.load_balancer_sg.name]
 
   tags = {
-    Name = "ec_nfs"
+    Name = var.instance_name_loadbalancer
   }
 }
 
-# Creamos una instancia EC2 para el Load Balancer
-resource "aws_instance" "ec_lb" {
-  ami                    = "ami-00874d747dde814fa"
-  instance_type          = "t2.small"
-  key_name               = "vockey"
-  security_groups = [aws_security_group.sg_lb.name]
+resource "aws_instance" "Nfs" {
+  ami             = var.ami_id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.nfs_sg.name]
 
   tags = {
-    Name = "ec_lb"
+    Name = var.instance_name_nfs
   }
 }
 
-# --------------------------------------------------------------------- #
-
-# -------------------------- ASIGNAR IP ESTÁTICA ---------------------- #
-
-
-# Creamos una IP elástica y la asociamos a la instancia de Load Balancer
+# Creación IP Elástica
 resource "aws_eip" "ip_elastica" {
-  instance = aws_instance.ec_lb.id
+  instance = aws_instance.LoadBalancer.id
 }
-
-# Mostramos la IP pública de la instancia
-output "elastic_ip" {
-  value = aws_eip.ip_elastica.public_ip
-}
-
-# --------------------------------------------------------------------- #
+# -----------------------------------------

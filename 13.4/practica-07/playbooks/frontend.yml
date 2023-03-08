@@ -11,7 +11,7 @@
 #-----------------------------------------------------------------------------------------------------------#
 
   tasks:
-  - name: Crear grupo de seguridad Frontend
+  - name: Crear SG
     ec2_group:
       name: "{{ ec2_security_group }}"
       description: "{{ ec2_security_group_description }}"
@@ -30,7 +30,7 @@
         cidr_ip: 0.0.0.0/0
     register: security_group
 
-  - name: Crear la instancia EC2
+  - name: Crear EC2
     ec2_instance:
       name: "{{ ec2_instance_name }}"
       key_name: "{{ ec2_key_name }}"
@@ -40,15 +40,15 @@
       state: running
     register: ec2
 
-  - name: Variable ec2
+  - name: Mostrar EC2
     debug:
       msg: "ec2: {{ ec2 }}"
 
-  - name: Nueva IP elástica y asociar a la instancia
+  - name: Crear IP Elástica
     ec2_eip:
       device_id: "{{ ec2.instances[0].instance_id }}"
     register: eip
 
-  - name: IP elástica
+  - name: Mostrar IP Elástica
     debug:
       msg: "La IP elástica es: {{ eip.public_ip }}"

@@ -1,7 +1,6 @@
 ---
 
 # Ejercicio 1
-  vars:
     ec2_security_group: sg_ejemplo_12
     ec2_security_group_description: Grupo de seguridad del ejemplo 12
     ec2_instance_name: instancia_ejemplo_12
