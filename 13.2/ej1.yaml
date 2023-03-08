@@ -1,18 +1,48 @@
 # Escriba una plantilla de AWS CloudFormation que cree la infraestructura necesaria para desplegar la aplicación web propuesta en la práctica 7.
 
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crear grupo de seguridad con puertos: 22,80,443 abiertos.
+  Crear instancia EC2 con la AMI de Ubuntu Server 22.04 y le asocia el grupo de seguridad.
+  Crear IP elástica y la asocia a la instancia EC2 haciendo uso del recurso AWS::EC2::EIPAssociation.
+
 #------------------------------------------------------------------------------------------------------
 # Variables
 
-Ubuntu_AMI_ID=ami-06878d265978313ca
-COUNT=1
-INSTANCE_TYPE=t2.micro
-KEY_NAME=vockey
+Parameters:
+  UbuntuAMIID:
+    Type: String
+    Default: ami-06878d265978313ca
 
-INSTANCE_NAME_FRONTEND=frontend-ej13-2
-INSTANCE_NAME_BACKEND=backend-ej13-2
+  COUNT:
+    Type: String
+    Default: 1
 
-SECURITY_GROUP_BACKEND=backend-ej13-2-sg
-SECURITY_GROUP_FRONTEND=frontend-ej13-2-sg
+  InstanceType:
+    Type: String
+    Default: t2.micro
+
+  KeyName:
+    Type: String
+    Default: vockey
+
+  InstanceNameFrontend:
+    Type: String
+    Default: frontend-ej13-2
+
+  InstanceNameBackend:
+    Type: String
+    Default: backend-ej13-2
+
+  SecurityGroupBackend:
+    Type: String
+    Default: backend-ej13-2-sg
+
+  SecurityGroupFrontend:
+    Type: String
+    Default: frontend-ej13-2-sg
+
 #------------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------------------
@@ -21,16 +51,12 @@ SECURITY_GROUP_FRONTEND=frontend-ej13-2-sg
 
 #------------------------------------------------------------------------------------------------------
 
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crear grupo de seguridad con puertos: 22,80,443 abiertos.
-  Crear instancia EC2 con la AMI de Ubuntu Server 22.04 y le asocia el grupo de seguridad.
-  Crear IP elástica y la asocia a la instancia EC2 haciendo uso del recurso AWS::EC2::EIPAssociation.
 Resources:
-  MySecurityGroup:
+  FrontendSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: {{ SECURITY_GROUP_FRONTEND }}
+      GroupName: 
+        Ref: SecurityGroupFrontend
       GroupDescription: Grupo de seguridad Frontend del ejercicio 13.2
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -45,17 +71,21 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-  MyEC2Instance:
+  FrontendInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
       SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
+        - !Ref FrontendSG
+      KeyName: 
+        Ref: KeyName
       Tags:
         - Key: Name
-          Value: {{ INSTANCE_NAME_FRONTEND }}
+          Value: 
+            Ref: InstanceNameFrontend
   MyEIP:
     Type: AWS::EC2::EIP
   MyEIPAssociation:
@@ -63,7 +93,7 @@ Resources:
     DependsOn: MyEIP
     Properties:
       AllocationId: !GetAtt MyEIP.AllocationId
-      InstanceId: !Ref MyEC2Instance
+      InstanceId: !Ref FrontendInstance
 #------------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------------------
@@ -72,16 +102,12 @@ Resources:
 
 #------------------------------------------------------------------------------------------------------
 
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crear grupo de seguridad con puertos: 22,80,443 abiertos.
-  Crear instancia EC2 con la AMI de Ubuntu Server 22.04 y le asocia el grupo de seguridad.
-  Crear IP elástica y la asocia a la instancia EC2 haciendo uso del recurso AWS::EC2::EIPAssociation.
-Resources:
-  MySecurityGroup:
+
+  BackendSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: {{ SECURITY_GROUP_BACKEND }}
+      GroupName: 
+        Ref: SecurityGroupBackend
       GroupDescription: Grupo de seguridad Backend del ejercicio 13.2
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -92,25 +118,21 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           CidrIp: 0.0.0.0/0
-  MyEC2Instance:
+  BackendInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
       SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
+        - !Ref BackendSG
+      KeyName: 
+        Ref: KeyName
       Tags:
         - Key: Name
-          Value: {{ INSTANCE_NAME_BACKEND }}
-  MyEIP:
-    Type: AWS::EC2::EIP
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    DependsOn: MyEIP
-    Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId
-      InstanceId: !Ref MyEC2Instance
+          Value: 
+            Ref: InstanceNameBackend
 
 #------------------------------------------------------------------------------------------------------
 

@@ -1,24 +1,62 @@
 # Escriba una plantilla de AWS CloudFormation que cree la infraestructura necesaria para desplegar la aplicación web propuesta en la práctica 9.
 
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Crea los grupos de seguridad de frontend y crea las instancias
+
 #------------------------------------------------------------------------------------------------------
 # Variables
 
-Ubuntu_AMI_ID=ami-06878d265978313ca
-COUNT=1
-INSTANCE_TYPE=t2.micro
-KEY_NAME=vockey
+Parameters:
+  UbuntuAMIID:
+    Type: String
+    Default: ami-06878d265978313ca
 
-INSTANCE_NAME_LOAD_BALANCER=loadbalancer-ej13-2
-INSTANCE_NAME_FRONTEND_01=frontend01-ej13-2
-INSTANCE_NAME_FRONTEND_02=frontend02-ej13-2
-INSTANCE_NAME_BACKEND=backend-ej13-2
-INSTANCE_NAME_NFS=nfs-ej13-2
+  COUNT:
+    Type: String
+    Default: 1
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+
+  KeyName:
+    Type: String
+    Default: vockey
+
+  InstanceNameFrontend:
+    Type: String
+    Default: frontend-ej13-2-2
+
+  InstanceNameBackend:
+    Type: String
+    Default: backend-ej13-2-2
+
+  InstanceNameLoadBalancer:
+    Type: String
+    Default: lb-ej13-2-2
+
+  InstanceNameNFS:
+    Type: String
+    Default: nfs-ej13-2-2
+
+  SecurityGroupBackend:
+    Type: String
+    Default: backend-ej13-2-2-sg
+
+  SecurityGroupFrontend:
+    Type: String
+    Default: frontend-ej13-2-2-sg
+
+  SecurityGroupLoadBalancer:
+    Type: String
+    Default: lb-ej13-2-2-sg
+  
+  SecurityGroupNFS:
+    Type: String
+    Default: nfs-ej13-2-2-sg
 
 
-SECURITY_GROUP_BACKEND=sg-backend-ej13-2
-SECURITY_GROUP_FRONTEND=sg-frontend-ej13-2
-SECURITY_GROUP_LOAD_BALANCER=sg-loadbalancer-ej13-2
-SECURITY_GROUP_NFS=sg-nfs-ej13-2
 #------------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------------------
@@ -26,100 +64,14 @@ SECURITY_GROUP_NFS=sg-nfs-ej13-2
 # Frontends
 
 #------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crea los grupos de seguridad de frontend y crea las instancias
+
 Resources:
-  MySecurityGroup:
+  FrontendSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: {{ SECURITY_GROUP_FRONTEND }}
-      GroupDescription: Grupo de seguridad de los frontends 
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-  MyEC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
-      SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
-      Tags:
-        - Key: Name
-          Value: {{ INSTANCE_NAME_FRONTEND_01 }}
-  MyEC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
-      SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
-      Tags:
-        - Key: Name
-          Value: {{ INSTANCE_NAME_FRONTEND_02 }}
-
-
-#------------------------------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------------------------------
-
-# Backend
-
-#------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crea el grupo de seguridad para backend con el puerto 3306 abierto y crea la instancia.
-Resources:
-  MySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: {{ SECURITY_GROUP_BACKEND }}
-      GroupDescription: Grupo de seguridad del backend 
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          CidrIp: 0.0.0.0/0
-  MyEC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
-      SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
-      Tags:
-        - Key: Name
-          Value: {{ INSTANCE_NAME_BACKEND }}
-#------------------------------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------------------------------
-
-# Load Balancer
-
-#------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crea un grupo de seguridad para el balanceador de carga (puerto 443), crea la instancia y le agrega una IP elástica
-Resources:
-  MySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: {{ SECURITY_GROUP_LOAD_NFS }}
-      GroupDescription: Grupo de seguridad del balanceador de carga
+      GroupName: 
+        Ref: SecurityGroupFrontend
+      GroupDescription: Grupo de seguridad Frontend del ejercicio 13.2
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -133,25 +85,61 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-  MyEC2Instance:
+  FrontendInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
       SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
+        - !Ref FrontendSG
+      KeyName: 
+        Ref: KeyName
       Tags:
         - Key: Name
-          Value: {{ INSTANCE_NAME_LOAD_BALANCER }}
-  MyEIP:
-    Type: AWS::EC2::EIP
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    DependsOn: MyEIP
+          Value: 
+            Ref: InstanceNameFrontend
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# Backend
+
+#------------------------------------------------------------------------------------------------------
+
+
+  BackendSG:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId
-      InstanceId: !Ref MyEC2Instance
+      GroupName: 
+        Ref: SecurityGroupBackend
+      GroupDescription: Grupo de seguridad Backend del ejercicio 13.2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+  BackendInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
+      SecurityGroups:
+        - !Ref BackendSG
+      KeyName: 
+        Ref: KeyName
+      Tags:
+        - Key: Name
+          Value: 
+            Ref: InstanceNameBackend
+
 #------------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------------------
@@ -159,35 +147,83 @@ Resources:
 # NFS
 
 #------------------------------------------------------------------------------------------------------
-AWSTemplateFormatVersion: '2010-09-09'
-Description: |
-  Crea el grupo de seguridad para el servidor NFS con el puerto 2049 tcp abierto y crea la instancia para el servidor.
-Resources:
-  MySecurityGroup:
+
+  NFSSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: {{ SECURITY_GROUP_NFS }}
-      GroupDescription: Grupo de seguridad del servidor NFS 
+      GroupName: 
+        Ref: SecurityGroupNFS
+      GroupDescription: Grupo de seguridad NFS del ejercicio 13.2
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 2049
-          ToPort: 2049
+          FromPort: 3306
+          ToPort: 3306
           CidrIp: 0.0.0.0/0
-  MyEC2Instance:
+  NFSInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06878d265978313ca
-      InstanceType: t2.small
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
       SecurityGroups:
-        - !Ref MySecurityGroup
-      KeyName: vockey
+        - !Ref NFSSG
+      KeyName: 
+        Ref: KeyName
       Tags:
         - Key: Name
-          Value: {{ INSTANCE_NAME_NFS }}
+          Value: 
+            Ref: InstanceNameNFS
+
+#------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------------------
+
+# Load Balancer
+
+#------------------------------------------------------------------------------------------------------
+  LoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: 
+        Ref: SecurityGroupLoadBalancer
+      GroupDescription: Grupo de seguridad Load Balancer del ejercicio 13.2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+  LoadBalancerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 
+        Ref: UbuntuAMIID
+      InstanceType: 
+        Ref: InstanceType
+      SecurityGroups:
+        - !Ref LoadBalancerSG
+      KeyName: 
+        Ref: KeyName
+      Tags:
+        - Key: Name
+          Value: 
+            Ref: InstanceNameNFS
+  MyEIP:
+    Type: AWS::EC2::EIP
+  MyEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    DependsOn: MyEIP
+    Properties:
+      AllocationId: !GetAtt MyEIP.AllocationId
+      InstanceId: !Ref LoadBalancerInstance
 
 
 
