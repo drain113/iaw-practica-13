@@ -25,17 +25,17 @@ ssh_key = "vockey"
 
 
 # Creación SG
-aws.create_security_group("sg_loa", "Grupo de seguridad: ", loadbalancer_ingress_permissions)
-aws.create_security_group("sg_fro", "Grupo de seguridad: ", frontend_ingress_permissions)
-aws.create_security_group("sg_bac", "Grupo de seguridad: ", backend_ingress_permissions)
-aws.create_security_group("sg_nfs", "Grupo de seguridad: ", nfs_ingress_permissions)
+aws.create_security_group("loadbalancer_sg", "Grupo de seguridad: ", loadbalancer_ingress_permissions)
+aws.create_security_group("frontend_sg", "Grupo de seguridad: ", frontend_ingress_permissions)
+aws.create_security_group("backend_sg", "Grupo de seguridad: ", backend_ingress_permissions)
+aws.create_security_group("nfs_sg", "Grupo de seguridad: ", nfs_ingress_permissions)
 
 # Creación instancias
-aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-LoadBalancer", "sg_loa")
-aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-FrontEnd-01", "sg_fro")
-aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-FrontEnd-02", "sg_fro")
-aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-BackEnd", "sg_bac")
-aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-NFS", "sg_nfs")
+aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-LoadBalancer", "loadbalancer_sg")
+aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-FrontEnd-01", "frontend_sg")
+aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-FrontEnd-02", "frontend_sg")
+aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-BackEnd", "backend_sg")
+aws.create_instance(ami_id, 1, instance_type, ssh_key, "EC2-NFS", "nfs_sg")
 
 # Creación IP elástica
 elastic_ip = aws.allocate_elastic_ip()

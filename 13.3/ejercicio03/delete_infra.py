@@ -2,7 +2,7 @@ import aws
 
 ec2_list = ["EC2-LoadBalancer", "EC2-FrontEnd-01", "EC2-FrontEnd-02", "EC2-BackEnd", "EC2-NFS"]
 
-sg_list = ["sg_loa", "sg_fro", "sg_bac", "sg_nfs"]
+sg_list = ["loadbalancer_sg", "frontend_sg", "backend_sg", "nfs_sg"]
 
 # Bucle for para eliminar instancias
 for ec2_name in ec2_list:
