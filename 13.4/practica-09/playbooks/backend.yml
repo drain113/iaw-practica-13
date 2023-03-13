@@ -4,13 +4,14 @@
   connection: local
   gather_facts: false
 
+  tasks:
 #-----------------------------------------------------Variables---------------------------------------------#
-      - name: Variables
-        ansible.builtin.include_vars:
-          variables.yml
+  - name: Variables
+    ansible.builtin.include_vars:
+      variables.yml
 #-----------------------------------------------------------------------------------------------------------#
 
-  tasks:
+
   - name: Crear grupo de seguridad Backend
     ec2_group:
       name: "{{ ec2_security_group }}"
