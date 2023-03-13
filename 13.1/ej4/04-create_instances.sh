@@ -53,9 +53,7 @@ aws ec2 run-instances \
     --instance-type $INSTANCE_TYPE \
     --key-name $KEY_NAME \
     --security-groups $SECURITY_GROUP_BACKEND \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME_BACKEND}]"
-
-
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME_BACKEND}]" \
 # Script para actualizar paquetes
-    --user-data file:update.sh \ 
-    --user-data "#!/bin/bash \n sudo apt update && sudo apt upgrade -y"
+    --user-data file:update.sh 
+#    --user-data "#!/bin/bash \n sudo apt update && sudo apt upgrade -y"
